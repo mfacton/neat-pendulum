@@ -1,6 +1,9 @@
 # neat-pendulum
 Double Pendulum Balancing with NEAT
 
+### Time stepping
+gravity at 0.25 gives good time step movement 
+
 ### Actions
 none, left, right
 

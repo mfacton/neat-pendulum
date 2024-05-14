@@ -7,7 +7,7 @@ import numpy as np
 class Simulation:
     """Simulation that runs double pendulum"""
 
-    def __init__(self) -> None:
+    def __init__(self, gravity) -> None:
         self.screen_size = 600
         self.ball_size = 10
 
@@ -19,9 +19,9 @@ class Simulation:
         self.theta2 = math.pi / 2
         self.vtheta1 = 0
         self.vtheta2 = 0
-        self.g = 1
+        self.g = gravity
 
-    def step(self, dtime):
+    def step(self):
         msum = self.m1 + self.m2
         thetadiff = self.theta1 - self.theta2
         sindif = math.sin(thetadiff)
@@ -50,12 +50,51 @@ class Simulation:
             )
         ) / denominator
 
-        self.vtheta1 += atheta1 * dtime
-        self.vtheta2 += atheta2 * dtime
-        self.theta1 += self.vtheta1 * dtime
-        self.theta2 += self.vtheta2 * dtime
+        self.vtheta1 += atheta1
+        self.vtheta2 += atheta2
+        self.theta1 += self.vtheta1
+        self.theta2 += self.vtheta2
 
-    def draw(self):
+        while self.theta1 >= 2 * math.pi:
+            self.theta1 -= 2 * math.pi
+        while self.theta1 < 0:
+            self.theta1 += 2 * math.pi
+
+        while self.theta2 >= 2 * math.pi:
+            self.theta2 -= 2 * math.pi
+        while self.theta2 < 0:
+            self.theta2 += 2 * math.pi
+
+        if self.vtheta1 > 100:
+            self.vtheta1 = 100
+        elif self.vtheta1 < -100:
+            self.vtheta1 = -100
+
+        if self.vtheta2 > 5:
+            self.vtheta2 = 5
+        elif self.vtheta2 < -5:
+            self.vtheta2 = -5
+
+    def push(self, force):
+        self.vtheta1 += force
+
+    def get_offset(self):
+        return self.theta1 * self.theta1 + self.theta2 * self.theta2
+
+    def get_voffset(self):
+        return self.vtheta1 * self.vtheta1 + self.vtheta2 * self.vtheta2
+
+    def state(self):
+        return (
+            math.sin(self.theta1),
+            math.cos(self.theta1),
+            math.sin(self.theta2),
+            math.cos(self.theta2),
+            self.vtheta1 / 25,
+            self.vtheta2 / 25,
+        )
+
+    def show(self):
         img = np.zeros((self.screen_size, self.screen_size, 3), dtype=np.uint8)
 
         centerx = self.screen_size / 2
