@@ -1,7 +1,8 @@
 # neat-pendulum
 Double Pendulum Balancing with NEAT
 
-## Notes
+### Actions
+none, left, right
 
 ### constant variables
 Gravity (g)
